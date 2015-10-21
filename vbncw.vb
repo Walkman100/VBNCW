@@ -17,5 +17,10 @@ Public Class HelloWorld
 
     Public Shared Sub Main()
         Console.WriteLine("Hello Mono World")
+        'I don't even know where to start without an IDE with autocomplete :/
+        System.Diagnostics.Process.Start("vbnc", "helloVB.vb")
+        System.Threading.Thread.Sleep(500)
+        System.Diagnostics.Process.Start("mono", "helloVB.exe")
+        System.Threading.Thread.Sleep(100)
     End Sub
 End Class
