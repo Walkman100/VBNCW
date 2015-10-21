@@ -1,4 +1,4 @@
-Imports System
+Imports System.IO.File
 
 Public Class VBNCW
     '   TO-DO
@@ -16,13 +16,13 @@ Public Class VBNCW
     'run output executable (if a flag is present?)
 
     Public Shared Sub Main()
-        Me.UnsharedMain() 'Otherwise I have to put "Me." before every reference to local objects -_-
-    End Sub
-
-    Dim tmpString as String = ""
-
-    Sub UnsharedMain()
-        ParseSLN(Console.Readline("Enter SLN location:"))
+        Console.Write("Enter SLN location: ")
+        tmpString = Console.Readline()
+        If Exists(tmpString)
+            ParseSLN(tmpString)
+        Else
+            Console.Write("File """ & tmpString & """ not found!")
+        End If
         Console.Readline()
         End
 
@@ -32,25 +32,24 @@ Public Class VBNCW
         System.Threading.Thread.Sleep(100)
     End Sub
 
-    Sub ParseSLN(filePath as String)
-        For Each line as String In System.IO.File.ReadLines(filePath)
+    Shared tmpString as String = ""
+
+    Shared Sub ParseSLN(filePath as String)
+        For Each line as String In ReadLines(filePath)
             If line.StartsWith("Project(", True, Nothing) Then
-                  ParseVBProj(line)
                 tmpString = line.SubString(line.IndexOf(","))
-                  ParseVBProj(tmpString)
-                tmpString = tmpString.Substring(tmpString.IndexOf(""""))
-                  ParseVBProj(tmpString)
+                tmpString = tmpString.Substring(tmpString.IndexOf("""") +1)
                 tmpString = tmpString.Remove(tmpString.IndexOf(""""))
                 ParseVBProj(tmpString)
             End If
         Next
     End Sub
 
-    Sub ParseVBProj(filePath as string)
+    Shared Sub ParseVBProj(filePath as string)
         Console.WriteLine("Found VBProj at: " & filePath)
     End Sub
 
-    Sub BuildProject()
+    Shared Sub BuildProject()
 
     End Sub
 
