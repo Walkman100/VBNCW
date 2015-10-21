@@ -1,3 +1,5 @@
+VBNC (Visual Basic.Net Compiler) is: `Copyright (C) 2004-2010 Rolf Bjarne Kvinge. All rights reserved.`
+
 [walkman100.github.io/blog/license](http://walkman100.github.io/blog/license)
 
 ### DON'T BE A DICK PUBLIC LICENSE
