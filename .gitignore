@@ -1,3 +1,4 @@
 *.exe
 *.kate-swp
 MonoTests/tlstest.cs
+bin/
