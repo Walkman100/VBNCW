@@ -14,14 +14,19 @@ Public Class VBNCW
     'run VBNC, check & report errors
     'run post-build tasks
     'run output executable (if a flag is present?)
-
-    Public Shared Sub Main()
-        Console.Write("Enter SLN location: ")
-        tmpString = Console.Readline()
+    
+    Public Shared Sub Main(args as String())
+        If args.Length = 0 Then
+            Console.Write("Enter SLN location: ")
+            tmpString = Console.Readline()
+        Else
+            tmpString = args(0)
+        End If
+        
         If Exists(tmpString)
             ParseSLN(tmpString)
         Else
-            Console.Write("File """ & tmpString & """ not found!")
+            Console.WriteLine("File """ & tmpString & """ not found!")
         End If
         Console.Readline()
         End
