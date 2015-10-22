@@ -23,15 +23,14 @@ mcs helloWinForms.cs -pkg:dotnet || die "Compiling helloWinForms.cs"
 mono helloWinForms.exe || die "Running helloWinForms.exe"
 echo
 
-# ASP.Net Hello World
-#xsp4 --port 9000 || die "Starting ASP.Net server"
-#curl http://localhost:9000/hello.aspx > /dev/null || die "Connecting to ASP.Net server"
-#echo
-## Disabled because xsp4 runs in the current terminal
-
 # VB.Net Console Hello World
 vbnc helloVB.vb || die "Compiling helloVB.vb"
 mono helloVB.exe || die "Running helloVB.exe"
+echo
+
+# ASP.Net Hello World
+echo "Open http://localhost:9000/hello.aspx in your browser, once XSP4 has started, to complete this test"
+xsp4 --port 9000 || die "Starting ASP.Net server"
 echo
 
 # Gtk# Hello World
