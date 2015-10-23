@@ -13,7 +13,7 @@ mono hello.exe || die "Running hello.exe"
 echo
 
 # HTTPS connections
-wget https://raw.github.com/mono/mono/master/mcs/class/Mono.Security/Test/tools/tlstest/tlstest.cs || die "Downloading tlstest.cs"
+wget -q https://raw.github.com/mono/mono/master/mcs/class/Mono.Security/Test/tools/tlstest/tlstest.cs || die "Downloading tlstest.cs"
 mcs tlstest.cs /r:System.dll /r:Mono.Security.dll || die "Compiling tlstest.cs"
 mono tlstest.exe https://www.nuget.org || die "Running tlstest.exe"
 echo
@@ -24,7 +24,7 @@ mono helloWinForms.exe || die "Running helloWinForms.exe"
 echo
 
 # VB.Net Console Hello World
-vbnc helloVB.vb || die "Compiling helloVB.vb"
+vbnc -nologo -utf8output -quiet helloVB.vb || die "Compiling helloVB.vb"
 mono helloVB.exe || die "Running helloVB.exe"
 echo
 
