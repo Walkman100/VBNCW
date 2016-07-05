@@ -1,1 +1,1 @@
-konsole --noclose -e bash run-tests.sh
+konsole -e bash -c "cd $(dirname $0); bash run-tests.sh"
