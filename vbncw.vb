@@ -1,7 +1,7 @@
 Imports System.IO.File
 Imports System.Xml
 
-Public Class VBNCW
+Module VBNCW
     '   TO-DO
     'scan current directory for .slns or .vbprojs, or skip if a valid file is provided as a flag
     'output dir
@@ -11,18 +11,18 @@ Public Class VBNCW
     'run post-build tasks
     'run output executable (if a flag is present?)
 
-    Shared tmpString As String = ""
+    Dim tmpString As String = ""
     
-    Shared ResGenCommand As String = "resgen "
-    Shared ResGenSourceFile As String = ""
-    Shared ResGenOutputFile As String = ""
+    Dim ResGenCommand As String = "resgen "
+    Dim ResGenSourceFile As String = ""
+    Dim ResGenOutputFile As String = ""
     
-    Shared VBNCCommand As String = "vbnc "
-    Shared VBNCFiles As String = ""
-    Shared ReferenceFiles As String = ""
-    Shared ImportNamespaces As String
+    Dim VBNCCommand As String = "vbnc "
+    Dim VBNCFiles As String = ""
+    Dim ReferenceFiles As String = ""
+    Dim ImportNamespaces As String = ""
 
-    Public Shared Sub Main(args As String())
+    Sub Main(args As String())
         If args.Length = 0 Then
             Console.Write("Enter SLN location: ")
             tmpString = Console.Readline()
@@ -38,13 +38,13 @@ Public Class VBNCW
             End
         End If
         
-        System.Diagnostics.Process.Start("vbnc", "helloVB.vb")
-        System.Threading.Thread.Sleep(500)
-        System.Diagnostics.Process.Start("mono", "helloVB.exe")
-        System.Threading.Thread.Sleep(100)
+        Dim process as System.Diagnostics.Process = System.Diagnostics.Process.Start("vbnc", "helloVB.vb")
+        process.WaitForExit
+        process = System.Diagnostics.Process.Start("mono", "helloVB.exe")
+        process.WaitForExit
     End Sub
 
-    Shared Sub ParseSLN(filePath As String)
+    Sub ParseSLN(filePath As String)
         For Each line As String In ReadLines(filePath)
             If line.StartsWith("Project(", True, Nothing) Then
                 tmpString = line.SubString(line.IndexOf(","))
@@ -64,7 +64,7 @@ Public Class VBNCW
         Next
     End Sub
 
-    Shared Sub ParseVBProj(filePath As string)
+    Sub ParseVBProj(filePath As string)
         Dim reader As XmlReader = XmlReader.Create(filePath)
         Try
             reader.Read()
@@ -142,4 +142,4 @@ Public Class VBNCW
     '  Console.WriteLine("text")
     '  text = Console.ReadLine("text")
     '  character = Console.ReadKey("text")
-End Class
+End Module
