@@ -49,23 +49,18 @@ Public Class VBNCW
                 ' tmpString now contains relative path, now get full path
                 tmpString = filePath.Remove(filePath.LastIndexOf("/") +1) & tmpString
                 
-                ParseVBProj(tmpString)
+                If Exists(tmpString)
+                    Console.WriteLine("Found VBProj at: " & tmpString)
+                    ParseVBProj(tmpString)
+                Else
+                    Console.WriteLine("VBProj at """ & tmpString & """ does not exist!")
+                End If
             End If
         Next
     End Sub
 
     Shared Sub ParseVBProj(filePath as string)
-        Console.WriteLine("File indicates VBProj at: " & filePath)
-        If Exists(filePath)
-            Console.WriteLine("File """ & filePath & """ exists!")
-            BuildProject()
-        Else
-            Console.WriteLine("File """ & filePath & """ does not exist!")
-        End If
-    End Sub
 
-    Shared Sub BuildProject()
-        
     End Sub
 
     ' Console commands:
