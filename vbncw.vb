@@ -65,7 +65,77 @@ Public Class VBNCW
     End Sub
 
     Shared Sub ParseVBProj(filePath As string)
-
+        Dim reader As XmlReader = XmlReader.Create(filePath)
+        Try
+            reader.Read()
+        Catch ex As XmlException
+            reader.Close
+            Console.WriteLine("Reading config failed! The error was: " & ex.ToString)
+            Exit Sub
+        End Try
+        
+        If reader.IsStartElement() AndAlso reader.Name = "Project" Then
+            While reader.Read
+                If reader.IsStartElement Then
+                    Select Case reader.Name
+                        Case "Import"
+                            Console.WriteLine("Import Project = " & reader("Project"))
+                            If reader("Condition") <> "" Then
+                                Console.WriteLine(" With Condition = " & reader("Condition"))
+                            End If
+                        Case "PropertyGroup"
+                            Console.WriteLine("<Start PropertyGroup>")
+                            Do While reader.Read AndAlso reader.IsStartElement
+                                Console.WriteLine("PropertyGroup: " & reader.Name)
+                                tmpString = ""
+                                Select Case reader.Name
+                                    Case "Configuration"
+                                        tmpString = reader("Condition")
+                                    Case "Platform"
+                                        tmpString = reader("Condition")
+                                End Select
+                                
+                                If tmpString <> "" Then
+                                    Console.WriteLine(" With Attrib Condition = " & tmpString)
+                                End If
+                                
+                                reader.Read
+                                If reader.Value <> "" Then
+                                    Console.WriteLine(" With Value = " & reader.Value)
+                                End If
+                                
+                                reader.Read
+                            Loop
+                            Console.WriteLine("</End PropertyGroup>")
+                        Case "ItemGroup"
+                            Console.WriteLine("<Start ItemGroup>")
+                            Do While reader.Read
+                                If reader.IsStartElement Then
+                                    Select Case reader.Name
+                                        Case "Reference"
+                                            Console.WriteLine("Found Reference: " & reader("Include"))
+                                        Case "Import"
+                                            Console.WriteLine("Found Import: " & reader("Include"))
+                                        Case "Compile"
+                                            Console.WriteLine("Found Compile: " & reader("Include"))
+                                        Case "None"
+                                            Console.WriteLine("Found ""None"": " & reader("Include"))
+                                        Case Else
+                                            Console.WriteLine("ItemGroup: """ & reader.Name & """")
+                                    End Select
+                                Else
+                                    If reader.Name = "ItemGroup" Then
+                                        Exit Do
+                                    End If
+                                End If
+                            Loop
+                            Console.WriteLine("</End ItemGroup>")
+                    End Select
+                End If
+            End While
+        End If
+        
+        reader.Close
     End Sub
 
     ' Console commands:
