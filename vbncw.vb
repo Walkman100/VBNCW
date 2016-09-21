@@ -1,23 +1,28 @@
 Imports System.IO.File
+Imports System.Xml
 
 Public Class VBNCW
     '   TO-DO
     'scan current directory for .slns or .vbprojs, or skip if a valid file is provided as a flag
-    'parse .SLN (if any) to get VBProj location
-    'parse VBProj:
-    '  output dir
-    '  VB files to include
-    '  ResX files to pre-process (low-priority)
-    '  other flags to VBNC
-    '  pre- and post-build tasks
+    'output dir
+    'pre- and post-build tasks
     'run pre-build tasks
     'run VBNC, check & report errors
     'run post-build tasks
     'run output executable (if a flag is present?)
 
-    Shared tmpString as String = ""
+    Shared tmpString As String = ""
+    
+    Shared ResGenCommand As String = "resgen "
+    Shared ResGenSourceFile As String = ""
+    Shared ResGenOutputFile As String = ""
+    
+    Shared VBNCCommand As String = "vbnc "
+    Shared VBNCFiles As String = ""
+    Shared ReferenceFiles As String = ""
+    Shared ImportNamespaces As String
 
-    Public Shared Sub Main(args as String())
+    Public Shared Sub Main(args As String())
         If args.Length = 0 Then
             Console.Write("Enter SLN location: ")
             tmpString = Console.Readline()
@@ -39,8 +44,8 @@ Public Class VBNCW
         System.Threading.Thread.Sleep(100)
     End Sub
 
-    Shared Sub ParseSLN(filePath as String)
-        For Each line as String In ReadLines(filePath)
+    Shared Sub ParseSLN(filePath As String)
+        For Each line As String In ReadLines(filePath)
             If line.StartsWith("Project(", True, Nothing) Then
                 tmpString = line.SubString(line.IndexOf(","))
                 tmpString = tmpString.Substring(tmpString.IndexOf("""") +1)
@@ -59,7 +64,7 @@ Public Class VBNCW
         Next
     End Sub
 
-    Shared Sub ParseVBProj(filePath as string)
+    Shared Sub ParseVBProj(filePath As string)
 
     End Sub
 
