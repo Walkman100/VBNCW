@@ -85,7 +85,7 @@ vbnc /noconfig /baseaddress:400000 /imports:Microsoft.VisualBasic,System,System.
 ```
 - [ ] `/main:DirectoryImage.My.MyApplication`
 - [ ] `/debug:Full`
-- [ ] `/filealign:512
+- [ ] `/filealign:512`
 - [ ] `/optimize+`
 - [ ] Output File: `/out:obj/Release/DirectoryImage.exe`
 - [ ] `/subsystemversion:6.00`

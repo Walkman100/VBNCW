@@ -13,11 +13,11 @@ Module VBNCW
 
     Dim tmpString As String = ""
     
-    Dim ResGenCommand As String = "resgen "
+    Dim ResGenCommand As String = ""
     Dim ResGenSourceFile As String = ""
     Dim ResGenOutputFile As String = ""
     
-    Dim VBNCCommand As String = "vbnc "
+    Dim VBNCCommand As String = ""
     Dim VBNCFiles As String = ""
     Dim ReferenceFiles As String = ""
     Dim ImportNamespaces As String = ""
@@ -32,16 +32,9 @@ Module VBNCW
         
         If Exists(tmpString)
             ParseSLN(tmpString)
-            End
         Else
             Console.WriteLine("File """ & tmpString & """ not found!")
-            End
         End If
-        
-        Dim process as System.Diagnostics.Process = System.Diagnostics.Process.Start("vbnc", "helloVB.vb")
-        process.WaitForExit
-        process = System.Diagnostics.Process.Start("mono", "helloVB.exe")
-        process.WaitForExit
     End Sub
 
     Sub ParseSLN(filePath As String)
@@ -57,6 +50,13 @@ Module VBNCW
                 If Exists(tmpString)
                     Console.WriteLine("Found VBProj at: " & tmpString)
                     ParseVBProj(tmpString)
+                    'PreBuild
+                    If BuildProject() <> 0 Then
+                        Console.Write("Press any key to continue . . . ")
+                        Console.ReadKey(True)
+                        Console.WriteLine()
+                    End If
+                    'PostBuild
                 Else
                     Console.WriteLine("VBProj at """ & tmpString & """ does not exist!")
                 End If
@@ -85,8 +85,11 @@ Module VBNCW
                             End If
                         Case "PropertyGroup"
                             Console.WriteLine("<Start PropertyGroup>")
+                            If reader("Condition") <> "" Then
+                                Console.WriteLine("With Condition = " & reader("Condition"))
+                            End If
                             Do While reader.Read AndAlso reader.IsStartElement
-                                Console.WriteLine("PropertyGroup: " & reader.Name)
+                                Console.Write(" " & reader.Name)
                                 tmpString = ""
                                 Select Case reader.Name
                                     Case "Configuration"
@@ -95,13 +98,13 @@ Module VBNCW
                                         tmpString = reader("Condition")
                                 End Select
                                 
-                                If tmpString <> "" Then
-                                    Console.WriteLine(" With Attrib Condition = " & tmpString)
-                                End If
-                                
                                 reader.Read
                                 If reader.Value <> "" Then
-                                    Console.WriteLine(" With Value = " & reader.Value)
+                                    Console.WriteLine(" = " & reader.Value)
+                                End If
+                                
+                                If tmpString <> "" Then
+                                    Console.WriteLine("  With Attrib Condition = " & tmpString)
                                 End If
                                 
                                 reader.Read
@@ -113,15 +116,17 @@ Module VBNCW
                                 If reader.IsStartElement Then
                                     Select Case reader.Name
                                         Case "Reference"
-                                            Console.WriteLine("Found Reference: " & reader("Include"))
+                                            Console.WriteLine(" Found Reference: " & reader("Include"))
                                         Case "Import"
-                                            Console.WriteLine("Found Import: " & reader("Include"))
+                                            Console.WriteLine(" Found Import: " & reader("Include"))
                                         Case "Compile"
-                                            Console.WriteLine("Found Compile: " & reader("Include"))
+                                            Console.WriteLine(" Found Compile: " & reader("Include"))
                                         Case "None"
-                                            Console.WriteLine("Found ""None"": " & reader("Include"))
+                                            Console.WriteLine(" Found ""None"": " & reader("Include"))
                                         Case Else
-                                            Console.WriteLine("ItemGroup: """ & reader.Name & """")
+                                            Console.Write("  """ & reader.Name)
+                                            reader.Read
+                                            Console.WriteLine(""" = " & reader.Value)
                                     End Select
                                 Else
                                     If reader.Name = "ItemGroup" Then
@@ -137,6 +142,22 @@ Module VBNCW
         
         reader.Close
     End Sub
+
+    Function BuildProject as Integer
+        ' Run ResGen
+        Dim process as System.Diagnostics.Process
+        process = System.Diagnostics.Process.Start("resgen", ResGenCommand & _
+          "/compile """ & ResGenSourceFile & """," & ResGenOutputFile)
+        process.WaitForExit
+        If process.ExitCode = 0 Then
+            ' Run VBNC
+            process = System.Diagnostics.Process.Start("vbnc", VBNCCommand & _
+            "/imports:" & ImportNamespaces & " /reference:" & ReferenceFiles & _
+            " /resource:" & ResGenOutputFile & " " & VBNCFiles)
+            process.WaitForExit
+        End If
+        Return process.ExitCode
+    End Function
 
     ' Console commands:
     '  Console.WriteLine("text")
