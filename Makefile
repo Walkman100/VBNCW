@@ -7,6 +7,7 @@ vbncw: $(VBFILES)
 
 clean:
 	$(RM) vbncw
+	$(RM) vbncw.exe
 	$(RM) -r bin
 # in case you had been using MonoDevelop
 
